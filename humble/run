@@ -1,0 +1,29 @@
+#!/bin/bash
+
+DOCKER_IMAGE="osrf/ros:humble-desktop"
+
+docker_cmd="docker run -it \
+  -v /etc/passwd:/etc/passwd:ro \
+  -v /etc/group:/etc/group:ro \
+  -v /etc/shadow:/etc/shadow:ro \
+  -v /etc/sudoers:/etc/sudoers:ro \
+  -v /etc/sudoers.d:/etc/sudoers.d:ro \
+  -v ${HOME}:${HOME} \
+  -v ${PWD}:${PWD} \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -e DISPLAY=$DISPLAY \
+  -w ${PWD} \
+  -u $(id -u):$(id -g) \
+  $DOCKER_IMAGE"
+
+#echo "Running Docker command: $docker_cmd"
+
+if [ "$#" -gt 0 ]; then
+    docker_cmd+=" $@"
+    echo "Docker run ${DOCKER_IMAGE} with [$@]"
+else
+    echo "Docker run ${DOCKER_IMAGE}"
+fi
+echo
+
+eval $docker_cmd
