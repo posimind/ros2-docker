@@ -1,0 +1,27 @@
+{
+  "name": "ROS2 Humble Dev Container",
+  "initializeCommand": "echo \"UID=$(id -u)\nGID=$(id -g)\" > .devcontainer/.env",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "ros2",
+  "workspaceFolder": "${localWorkspaceFolder}",
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": [
+        "wraith13.unsaved-files-vscode",
+        "Anthropic.claude-code",
+        "ms-azuretools.vscode-containers",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "ms-vscode.cpptools",
+        "ms-vscode-remote.remote-containers",
+        "ms-toolsai.jupyter-keymap",
+        "ms-python.python",
+        "ms-python.vscode-python-envs",
+        "ms-python.debugpy",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+  "shutdownAction": "stopCompose"
+}

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Export current user's UID and GID for docker-compose
+export UID
+export GID=$(id -g)
+DOCKER_COMPOSE_DIR=$(dirname $(realpath $0))
+DOCKER_COMPOSE_CMD="docker compose -f ${DOCKER_COMPOSE_DIR}/docker-compose.yml run -i --rm -e TERM=xterm-color ros2"
+
+if [ "$#" -gt 0 ]; then
+    echo "Running command in ROS 2 container: $@"
+    echo
+    eval "$DOCKER_COMPOSE_CMD $@"
+else
+    echo "Starting ROS 2 interactive shell"
+    echo
+    eval "$DOCKER_COMPOSE_CMD"
+fi

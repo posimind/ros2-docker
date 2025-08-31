@@ -1,0 +1,40 @@
+#!/bin/bash
+
+DOCKER_IMAGE="autonomous-ros:humble"
+DOCKERFILE_DIR=$(dirname $(realpath $0))
+
+if [ ! -n "$(docker images $DOCKER_IMAGE -q)" ]; then
+    echo "WARN: Docker image $DOCKER_IMAGE not found."
+    echo "Use directory [$DOCKERFILE_DIR] for Docker build context."
+    echo "Building..."
+    docker build -t $DOCKER_IMAGE $DOCKERFILE_DIR || {
+        echo 'ERROR: Docker build failed'
+        exit 1
+    }
+fi
+
+docker_cmd="docker run -it --rm --privileged \
+  -v /etc/passwd:/etc/passwd:ro \
+  -v /etc/group:/etc/group:ro \
+  -v /etc/shadow:/etc/shadow:ro \
+  -v ${HOME}:${HOME} \
+  -v ${DOCKERFILE_DIR}/files/bashrc:${HOME}/.bashrc:ro \
+  -v ${PWD}:${PWD} \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -e DISPLAY=$DISPLAY \
+  -e TERM=xterm-color
+  -w ${PWD} \
+  -u $(id -u):$(id -g) \
+  $DOCKER_IMAGE"
+
+#echo "Running Docker command: $docker_cmd"
+
+if [ "$#" -gt 0 ]; then
+    docker_cmd+=" $@"
+    echo "Docker run ${DOCKER_IMAGE} with [$@]"
+else
+    echo "Docker run ${DOCKER_IMAGE}"
+fi
+echo
+
+eval $docker_cmd
